@@ -1,0 +1,2369 @@
+FORMAT: 1A
+HOST: https://www.sesamestreet.org/api/2.0/
+
+# SesameGo
+SesameGo Back-end Services API for front-end apps (iOs, Android, WebApp).
+
+## Authentication
+
+Most API endpoints require user to be authenticated in order to get data.
+After authenticating via `/user/login` front-end app will receive a session name, id and an authentication token.
+These attributes need to be included as headers (Cookie: [sessionName]=[sessionId] and X-CSRF-Token: [token]) in
+all API calls that require authentication, i.e.:
+
++ `Cookie`: SESSd9048c5ceb66140dc37f7d4e2ebdd373=4nxP3-HzTCCooaWKF1tcl3BRGjG_aovgyRPEXIGXS2
++ `X-CSRF-Token`: 437b930db84b8079c2dd804a71936b5f
+
+## Request source indicators
+
+Every API endpoint requires information about request source. Platform name, OS version and
+app version should be included in User-Agent header, i.e:
+
++ `User-Agent`: Samsung Galaxy Tab 10.1; Android 3.1
+
+## App version indicator
+
+Every API endpoint requires information about client SesameGo application and
+its version.
+
++ `X-App`: SesameGo Web
++ `X-App-Version`: 1.0
+
+Possible values for X-App header:
+
++ `SesameGo Web`
++ `SesameGo iOS`
++ `SesameGo Android`
++ `SesameGo Roku`
+
+## Localization
+
+In order to support content localization in future all API requests should come with locale
+information (see [BCP47](http://www.rfc-editor.org/rfc/bcp/bcp47.txt) for reference) in `Accept-Language` header as shown below:
+
++ Accept-Language: en-US
+
+## Country restriction
+
+For all requests made not from the territory of US and Canada will be returned a response
+with corresponding error:
+
+`Response 403 (application/json)`
+
+        {
+            "errors": [
+                "Not available in your country. Only for US and Canada."
+            ]
+        }
+
+# Group Screens
+
+## Screens Collection [/screens/?uri={uri}&depth={depth}&limitNumber={limitNumber}&offsetNumber={offsetNumber}]
+
+Properties description:
+
++ `uri` - unique resource identifier of the screen. Generated automatically from uri of parent screen concatenated
+            with title of current screen.
++ `image` - image of the screen.
+    - `portrait` - Kaltura URL to the image in portrait orientation.
+    - `landscape` - Kaltura URL to the image in landscape orientation.
++ `titleBarColor` - determines background color of the title bar.
++ `titleBarLipColor` - determines border color of the title bar.
++ `primary` - determines size of the block (single or twice-size). Possible values:
+    - `true`
+    - `false`
++ `itemsTotal` - total number of items in the screen. Parameter `limitNumber` does not affect this value.
++ `type` - type of the entity in the screen. Possible values:
+    - `screen`
+    - `video`
+    - `game`
+
+### Get a Screen with list of items in it [GET]
+
++ Parameters
+    + uri (optional, "string") ... URI of the screen. Root screen will be returned if parameter is not provided. For returning Roku root screen you must provide "/roku-home/" for this parameter.
+    + depth (optional, number, `0`) ... Number of layers of data to be returned
+    + limitNumber (optional, number, `10`) ... Number of objects to return
+    + offsetNumber (optional, number, `0`) ... Defines the offset of objects that should be skipped from start. Applicable to 1st-level screen only.
+
++ Response 200 (application/json)
+
+        {
+            "screen": {
+                "uri": "/home/",
+                "title": "SesameGO",
+                "titleBarColor": "",
+                "titleBarLipColor": "",
+                "image": {
+                    "portrait": "",
+                    "landscape": ""
+                },
+                "banner": {
+                    "image": {
+                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                    },
+                    "background": {
+                        "portrait": "",
+                        "landscape": "",
+                    },                    
+                },
+                "color": "",
+                "primary": false,
+                "type": "screen",
+                "itemsTotal": 15,
+                "items": [
+                    {
+                        "id": 34,
+                        "uri": "/home/baby-bear-sitter/",
+                        "type": "video",
+                        "title": "Baby Bear’s Sitter",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "kalturaID": "1_e15z9gvp",
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                        "duration": 30,
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png"
+                        },
+                        "primary": true,
+                        "free": true
+                    },
+                    {
+                        "id": 34,
+                        "type": "video",
+                        "uri": "/home/bobs-deaf-niece/",
+                        "title": "Bob's Deaf Niece",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "kalturaID": "1_e15z9gvp",
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                        "duration": 30,
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png"
+                        },
+                        "primary": true,
+                        "free": true,
+                        "terms": [
+                            {
+                                "id": 15,
+                                "title": "Reading",
+                                "description": "Some Reading description.",
+                                "taxonomy": "theme"
+                            },
+                            {
+                                "id": 20,
+                                "title": "Conflict Resolution",
+                                "description": "Some Conflict Resolution description.",
+                                "taxonomy": "theme"
+                            },
+                            {
+                                "id": 16,
+                                "title": "Elmo's World",
+                                "description": "",
+                                "taxonomy": "show"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 35,
+                        "uri": "/home/elmo-learns-about-growing-up/",
+                        "type": "video",
+                        "kalturaID": "1_e15z9gvp",
+                        "title": "Elmo Learns About Growing Up",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_prr1ggld/format/png",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_prr1ggld/format/png"
+                        },
+                        "primary": false,
+                        "duration": 30,
+                        "free": true,
+                        "terms": [
+                            {
+                                "id": 15,
+                                "title": "Reading",
+                                "description": "Some Reading description.",
+                                "taxonomy": "theme"
+                            },
+                            {
+                                "id": 20,
+                                "title": "Conflict Resolution",
+                                "description": "Some Conflict Resolution description.",
+                                "taxonomy": "theme"
+                            },
+                            {
+                                "id": 16,
+                                "title": "Elmo's World",
+                                "description": "",
+                                "taxonomy": "show"
+                            }
+                        ]
+                    },
+                    {
+                        "uri": "/home/sesame-street-full/",
+                        "title": "Sesame Street Full Episodes",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "type": "screen",
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_vqhyzgpu",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_vqhyzgpu"
+                        },
+                        "banner": {
+                            "image": {
+                                "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                                "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                            },
+                            "background": {
+                                "portrait": "",
+                                "landscape": "",
+                            },                    
+                        },                        
+                        "primary": false,
+                        "itemsTotal": 15,
+                        "items": [
+                            {
+                                "uri": "/home/sesame-street-full/season-1/",
+                                "title": "Season 1",
+                                "titleBarColor": "#ff4b38",
+                                "titleBarLipColor": "#bb1200",
+                                "type": "screen",
+                                "image": {
+                                    "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                    "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                },
+                                "banner": {
+                                    "image": {
+                                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                                    },
+                                    "background": {
+                                        "portrait": "",
+                                        "landscape": "",
+                                    },                    
+                                },
+                                "primary": false,
+                                "itemsTotal": 15,
+                                "items": [
+                                    {
+                                        "id": 64,
+                                        "uri": "/home/sesame-street-full/season-1/video-1/",
+                                        "type": "video",
+                                        "title": "Video #1",
+                                        "titleBarColor": "#ff4b38",
+                                        "titleBarLipColor": "#bb1200",
+                                        "kalturaID": "1_e15z9gvp",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                                        "duration": 30,
+                                        "image": {
+                                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                        },
+                                        "primary": false,
+                                        "free": true,
+                                        "terms": [
+                                            {
+                                                "id": 15,
+                                                "title": "Reading",
+                                                "description": "Some Reading description.",
+                                                "taxonomy": "theme"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "id": 65,
+                                        "uri": "/home/sesame-street-full/season-1/video-2/",
+                                        "type": "video",
+                                        "title": "Video #2",
+                                        "titleBarColor": "#ff4b38",
+                                        "titleBarLipColor": "#bb1200",
+                                        "kalturaID": "1_e16z8gvp",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                                        "duration": 30,
+                                        "image": {
+                                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                        },
+                                        "primary": false,
+                                        "free": true,
+                                        "terms": [
+                                            {
+                                                "id": 15,
+                                                "title": "Reading",
+                                                "description": "Some Reading description.",
+                                                "taxonomy": "theme"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "uri": "/home/sesame-street-full/season-2/",
+                                "title": "Season 2",
+                                "titleBarColor": "#ff4b38",
+                                "titleBarLipColor": "#bb1200",
+                                "type": "screen",
+                                "image": {
+                                    "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                    "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                },
+                                "banner": {
+                                    "image": {
+                                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                                    },
+                                    "background": {
+                                        "portrait": "",
+                                        "landscape": "",
+                                    },                    
+                                },
+                                "primary": false,
+                                "itemsTotal": 15,
+                                "items": []
+                            }
+                        ]
+                    },
+                    {
+                        "uri": "/home/pinky-dinky-doo/",
+                        "title": "Pinky Dinky Doo",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "type": "screen",
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1507822/thumbnail/entry_id/0_lajbjaqu/format/png",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1507822/thumbnail/entry_id/0_lajbjaqu/format/png"
+                        },
+                        "banner": {
+                            "image": {
+                                "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                                "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                            },
+                            "background": {
+                                "portrait": "",
+                                "landscape": "",
+                            },                    
+                        },
+                        "primary": false,
+                        "itemsTotal": 15,
+                        "items": [
+                            {
+                                "uri": "/home/pinky-dinky-doo/season-1/",
+                                "title": "Season 1",
+                                "titleBarColor": "#ff4b38",
+                                "titleBarLipColor": "#bb1200",
+                                "type": "screen",
+                                "image": {
+                                    "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                    "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                },
+                                "primary": false,
+                                "itemsTotal": 15,
+                                "items": [
+                                    {
+                                        "id": 64,
+                                        "uri": "/home/pinky-dinky-doo/season-1/video-1/",
+                                        "type": "video",
+                                        "title": "Video #1",
+                                        "titleBarColor": "#ff4b38",
+                                        "titleBarLipColor": "#bb1200",
+                                        "kalturaID": "1_e15z9gvp",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                                        "duration": 30,
+                                        "image": {
+                                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                        },
+                                        "primary": false,
+                                        "free": true,
+                                        "terms": [
+                                            {
+                                                "id": 15,
+                                                "title": "Reading",
+                                                "description": "Some Reading description.",
+                                                "taxonomy": "theme"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "id": 65,
+                                        "uri": "/home/pinky-dinky-doo/season-1/video-2/",
+                                        "type": "video",
+                                        "title": "Video #2",
+                                        "titleBarColor": "#ff4b38",
+                                        "titleBarLipColor": "#bb1200",
+                                        "kalturaID": "1_e16z8gvp",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                                        "duration": 30,
+                                        "image": {
+                                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                        },
+                                        "primary": false,
+                                        "free": true,
+                                        "terms": [
+                                            {
+                                                "id": 15,
+                                                "title": "Reading",
+                                                "description": "Some Reading description.",
+                                                "taxonomy": "theme"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "uri": "/home/pinky-dinky-doo/season-2/",
+                                "title": "Season 2",
+                                "titleBarColor": "#ff4b38",
+                                "titleBarLipColor": "#bb1200",
+                                "type": "screen",
+                                "image": {
+                                    "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                                    "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e16z9gvp"
+                                },
+                                "primary": false,
+                                "itemsTotal": 15,
+                                "items": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": 83,
+                        "uri": "/home/cooking-with-cookie/",
+                        "type": "game",
+                        "title": "Cooking with Cookie",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_vqhyzgpu",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_vqhyzgpu"
+                        },
+                        "primary": true,
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit.",
+                        "url": "http://www.sesamestreet.org/games?uuid=edb864ea-1524-4f23-808a-8636b53961d2"
+                    },
+                    {
+                        "id": 83,
+                        "uri": "/home/another-game/",
+                        "type": "game",
+                        "title": "Another game",
+                        "titleBarColor": "#ff4b38",
+                        "titleBarLipColor": "#bb1200",
+                        "image": {
+                            "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/1_oa7olpsg/format/png",
+                            "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/1_oa7olpsg/format/png"
+                        },
+                        "primary": true,
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit.",
+                        "url": "http://www.sesamestreet.org/games?uuid=edb864ea-1524-4f23-808a-8636b53961d2"
+                    }
+                ]
+            }
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Screen not found"
+            ]
+        }
+
+# Group Users
+
+## Authentication [/user/login]
+Exchanges a user's email/password for an authentication token
+
+### Login user [POST]
+
+Additionally returns active subscription object if user has any.
+
++ Request (application/json)
+
+        {
+            "email": "john.doe@email.com",
+            "password": "qwerty123!"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "sessionId": "4nxP3-HzTCCooaWKF1tcl3BRGjG_aovgyRPEXIGXS28",
+            "sessionName": "SESSd9048c5ceb66140dc37f7d4e2ebdd373",
+            "token": "437b930db84b8079c2dd804a71936b5f",
+            "user": {
+                "id": 1,
+                "email": "john.doe@email.com",
+                "firstName": "John",
+                "lastName": "Doe",
+                "created": 1349258053,
+                "access": 1351172468,
+                "login": 1351172644,
+                "status": 1
+            },
+            "subscription": {
+                "id": 11,
+                "externalID": "3subcr",
+                "title": "Monthly",
+                "plan": 71,
+                "status": "inactive",
+                "created": 1409919391,
+                "purchased": 1409919691,
+                "periodStart": 1409919691,
+                "periodEnd": 1412511691,
+                "renew": false
+            }
+        }
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Sorry, unrecognized username or password",
+                "User is migrated and has no password"
+            ]
+        }
+
+## Logout [/user/logout]
+
+Expires an API token.
+
+### Logout [POST]
+
++ Response 200 (application/json)
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "User is not logged in"
+            ]
+        }
+
+## User [/user?withBillingInfo={withBillingInfo}]
+
+A single User object with all its details.
+
++ Parameters
+    + withBillingInfo (optional, number, `1`) ... Return additionally billing info 
+        (card* and address* fields).
+
++ Model (application/json)
+
+        {
+            "user": {
+                "id": 1,
+                "email": "john.doe@email.com",
+                "firstName": "John",
+                "lastName": "Doe",
+                "status": 1,
+                "cardNumber": "1234",
+                "cardExpYear": 2020,
+                "cardExpMonth": 6,
+                "cardFullName": "JOHN DOE",
+                "addressCountry": "US",
+                "addressState": "NY",
+                "addressCity": "New York",
+                "addressZip": "",
+                "addressLine": "" 
+            }
+        }
+
+### Retrieve a User profile [GET]
+
++ Response 200
+
+    [User][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
+## Update/Create User [/user]
+
+### Update a User profile [PUT]
+
++ Request (application/json)
+
+        {
+            "password": "welcome2sesame!",
+            "firstName": "John",
+            "lastName": "Doe",
+            "cardNumber": "4242424242424242",
+            "cardCvv": 314,
+            "cardExpYear": 2015,
+            "cardExpMonth": 10,
+            "cardFullName": "JOHN DOE",
+            "addressCountry": "US",
+            "addressState": "NY",
+            "addressCity": "New York",
+            "addressZip": "",
+            "addressLine": ""
+        }
+
++ Response 200
+
+    [User][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
+### Create a User profile [POST]
+
+Creates a user account.
+
+Request parameters description:
+
++ `email` (required)
++ `password` (required)
++ `firstName` (required)
++ `lastName` (required)
++ `cardNumber` (optional)
++ `cardCvv` (optional)
++ `cardExpYear` (optional)
++ `cardExpMonth` (optional)
++ `addressCountry` (optional)
++ `addressState` (optional)
++ `addressCity` (optional)
++ `addressZip` (optional)
++ `addressLine` (optional)
+
++ Request (application/json)
+
+        {
+            "email": "john.doe@email.com",
+            "firstName": "John",
+            "lastName": "Doe",
+            "password": "qwerty123!",
+            "cardNumber": "12345678901234",
+            "cardCvv": 733,
+            "cardExpYear": 2020,
+            "cardExpMonth": 6,
+            "cardFullName": "JOHN DOE",
+            "addressCountry": "US",
+            "addressState": "NY",
+            "addressCity": "New York",
+            "addressZip": "",
+            "addressLine": ""            
+        }
+
++ Response 200
+
+    [User][]
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Invalid email",
+                "The e-mail is already registered"
+            ]
+        }
+
+## Password Reset [/user/reset/password]
+
+### Reset password [POST]
+
++ Request (application/json)
+
+        {
+            "email": "john.doe@email.com"
+        }
+
++ Response 200 (application/json)
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Sorry, unrecognized email."
+            ]
+        }
+
+### Set new password [PUT]
+
+This method should be used to set new password for user set came to frontend
+using one-time password reset link. Parameters `id`, `timestamp`, `hash`
+should be taken from the link as GET arguments.
+
+Request parameters:
++ id (required, number, `12`) ... ID of the user to set password to.
++ timestamp (required, number, `1349258053`) ... Timestamp when security hash was generated.
+    Needed for advanced security purposes.
++ hash (required, string, `HzTCCooaWKF2tcl4BRGjG_aovgyRPEXIGXS5`) ... Security hash.
+
++ Request (application/json)
+
+        {
+            "id": 12,
+            "timestamp": 1349258053,
+            "hash": "HzTCCooaWKF2tcl4BRGjG_aovgyRPEXIGXS5",
+            "newPassword": "some-new-password!"
+        }
+
++ Response 200 (application/json)
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "You have tried to use a one-time login link that has expired",
+                "The one-time login link you clicked is invalid. Please request a new one",
+                "Another user (%other_user) is already logged into the site on this computer, but you tried to use a one-time link for user %resetting_user. Please logout and try using the link again.",
+                "You are logged in as %user"
+            ]
+        }
+
+# Group Plans
+
+These methods are only used by a Web application.
+
+## Plans Collection [/plans?type={type}&intent={intent}]
+
++ Model (application/json)
+
+        {
+            "plans": [
+                {
+                    "id": 74,
+                    "productId": "",
+                    "intent": "standard",
+                    "title": "Free Trial",
+                    "description": "Free, unlimited access to Sesame Street videos and games for 48 hours.",
+                    "createLimit": 1,
+                    "period": [
+                        48,
+                        "hour"
+                    ],
+                    "price": 0,
+                    "type": "googleplay"
+                },
+                {
+                    "id": 70,
+                    "productId": "com.sesameworkshop.subscription.monthly",
+                    "intent": "standard",
+                    "title": "Monthly Subscription",
+                    "description": "This offer is non-refundable, but you may cancel your subscription at any time. ",
+                    "createLimit": -1,
+                    "period": [
+                        1,
+                        "month"
+                    ],
+                    "price": 9.99,
+                    "type": "googleplay"
+                },
+                {
+                    "id": 71,
+                    "productId": "com.sesameworkshop.subscription.yearly",
+                    "intent": "standard",
+                    "title": "Annual Subscription",
+                    "description": "This offer is non-refundable, but you may cancel your subscription at any time. ",
+                    "createLimit": -1,
+                    "period": [
+                        1,
+                        "year"
+                    ],
+                    "price": 19.99,
+                    "type": "googleplay"
+                }
+            ]
+        }
+        
+
+### List all subscription plans or filter them by type or intent. [GET]
+
++ Parameters
+    + type (optional, string, `web`) ... Plan type.
+        + Values
+            + `web`
+            + `googleplay`
+            + `appstore`
+    + intent (optional, string, `standard`) ... Plan intent.
+        + Values
+            + `hidden`
+            + `standard`
+            + `gift`
+
++ Response 200
+
+    [Plans Collection][]
+    
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Invalid plan type",
+                "Invalid plan intent",
+            ]
+        }
+
+## Plan [/plans/{id}]
+
+Plan properties description:
+
++ `id` - plan ID.
++ `intent` - plan intent. Needed to implement discount-plans for mobile apps, gifts for web apps. Possible values:
+        + `standard` - standard plan.
+        + `hidden` - needed to implement plans that exist only in Drupal (i.e. for migrated 
+            users). Hidden plans can be retrieved in informational purposes only (to get
+            info about users active plan). Subscriptions with plan of this 
+            intent cannot be created via API.
+        + `gift` - needed to implement gift-plans for web app.
++ `title` - plan title.
++ `description` - plan description.
++ `createLimit` - number of allowed subscriptions. Needed for trial plan implementation.
++ `period` - subscription period in seconds.
++ `price` - price for single subscription period.
++ `type` - type of plan. Possible values:
+        + `web`
+        + `googleplay`
+        + `appstore`
+        + `roku`
+
++ Model (application/json)
+
+        {
+            "plan": {
+                "id": 71,
+                "intent": "standard",
+                "title": "Monthly",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "createLimit": 5,
+                "period": [1, "month"],
+                "price": 3.99,
+                "type": "web"
+            }
+        }
+
+### Retrieve a single subscription plan [GET]
+
++ Parameters
+    + id (required, number, `123`) ... ID of subscription object.
+
++ Response 200
+
+    [Plan][]
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Plan not found"
+            ]
+        }
+
+# Group Subscriptions
+
+Subscription properties description:
+
++ `id` - subscritption id.
++ `externalID` - ID of subscription in payment system(Stripe/Google Play/AppStore/Roku).
++ `title` - human-readable title of subscription, same as Plan title by default.
++ `plan` - ID of subscription plan.
++ `status` - status of subscription. Possible values:
+    + `active`
+    + `inactive`
++ `created` - UNIX timestamp of subscription creation.
++ `purchased` - UNIX timestamp of subscription purchase.
++ `periodStart` - UNIX timestamp of subscription start date.
++ `periodEnd` - UNIX timestamp of subscription end date.
++ `renew` - automatically charge for next period. Possible values:
+    + `true`
+    + `false`
+
+## Subscriptions collection [/subscriptions/?status={status}]
+
++ Model (application/json)
+
+        {
+            "subscriptions": [
+                {
+                    "id": 11,
+                    "externalID": "123aa",
+                    "title": "Monthly",
+                    "plan": 71,
+                    "status": "active",
+                    "created": 1409919391,
+                    "purchased": 1409919691,
+                    "periodStart": 1409919691,
+                    "periodEnd": 1412511691,
+                    "renew": true,
+                    "price": 3.99
+                },
+                {
+                    "id": 2,
+                    "externalID": "123bb",
+                    "title": "Daily",
+                    "plan": 73,
+                    "status": "inactive",
+                    "created": 1409913491,
+                    "purchased": 1409913691,
+                    "periodStart": 1409913691,
+                    "periodEnd": 1410000091,
+                    "renew": false,
+                    "price": 1.00
+                }
+            ]
+        }
+
+### Retrieve subscriptions list of current user [GET]
+
++ Parameters
+    + status (optional, string, `active`) ... Subscription status. Allows to request active/inactive subscriptions.
+        + Values
+            + `active`
+            + `inactive`
+
++ Response 200
+
+    [Subscriptions collection][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Invalid status"
+            ]
+        }
+
+## Subscription [/subscriptions]
+
++ Model (application/json)
+
+        {
+            "subscription": {
+                "id": 11,
+                "externalID": "3subcr",
+                "title": "Monthly",
+                "plan": 71,
+                "status": "inactive",
+                "created": 1409919391,
+                "purchased": 1409919691,
+                "periodStart": 1409919691,
+                "periodEnd": 1412511691,
+                "renew": false,
+                "price": 3.99
+            }
+        }
+
+### Create a subscription for a current user [POST]
+
+Request parameters description:
+
++ `plan` - ID of subscription plan.
++ `discount` - Discount hash.
+                Web app should send Stripe coupon code.
++ `renew` - automatically charge for next period. Possible values:
+        + `true`
+        + `false`
++ `externalID` - ID of subscription in payment system(Google Play/AppStore/Roku). For mobile apps only.
++ `token` - card token/receipt ID from Stripe/Google Play/AppStore/Roku.
+
++ Request (application/json)
+
+        {
+            "subscription": {
+                "plan": 71,
+                "discount": "0800fc577294c34e0b28ad2839435945",
+                "renew": true,
+                "externalID": "3subcr",
+                "token": "12345"
+            }
+        }
+
++ Response 200
+
+    [Subscription][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 403 (application/json)
+
+        {
+            "errors": [
+                "Payment token is not valid",
+                "Discount not found",
+                "You have already applied this discount",
+                "The plan cannot be used to create new subscriptions",
+                "You already have an active subscription"
+                "Subscriptions limit for this plan has been exhausted"
+            ]
+        }
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Plan not found"
+            ]
+        }
+
+## Retrieve/cancel subscription [/subscriptions/{id}]
+
++ Parameters
+    + id (required, number, `123`) ... ID of subscription object.
+
+### Retrieve specific subscription of current user [GET]
+
++ Response 200
+
+    [Subscription][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Subscription not found"
+            ]
+        }
+
+### Renew specific subscription of current user [PUT]
+
+Sets "renew" to true or false.
+
++ Request (application/json)
+
+        {
+            "renew": true
+        }
+
++ Response 200
+
+    [Subscription][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Subscription not found"
+            ]
+        }
+
++ Response 406(application/json)
+
+        {
+            "errors": [
+                "Subscription has been cancelled",
+                "Invalid id or renew argument"
+            ]
+        }
+
+### Cancel specific subscription of current user [DELETE]
+
+Sets "status" to "inactive" and "renew" to false.
+
++ Response 200
+
+    [Subscription][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+             "Subscription not found"
+            ]
+        }
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Subscription has been already cancelled",
+                "Invalid id"
+            ]
+        }
+        
+## Billing History [/subscriptions/history?offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
++ Model (application/json)
+
+        {
+            "invoices": [
+                {
+                    "id": 11,
+                    "date": 1413810437,
+                    "amount": 29.99,
+                    "currency": "usd",
+                    "card": "4242"
+                }
+            ]
+        }
+
+### Receive billing history [GET]
+
++ Parameters
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many invoices should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of invoices to return.
+
++ Response 200
+
+    [Billing History][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
+## Get user email for given externalID [/subscriptions/external-id/{externalID}]
+
+### Get user email for given externalID [GET]
+
++ Parameters
+    + externalID (optional, number, `0`) ... External ID (transaction ID) to search for.
+
++ Response 200
+
+        {
+            "email": "user@example.com"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Subscription with provided externalID not found"
+            ]
+        }
+
+# Group Gifts
+
+## Gift [/gifts]
+
+Properties description:
+
++ `hash` - Gift hash, 32  symbols.
++ `sender` - email address of sender (buyer).
++ `addressee` - email address of receiver.
++ `subscription` - Subscription object. If gift is not applied, properties `periodStart`, `periodEnd` will
+    contain `0`, property `status` will be `inactive`. After gift applying these properties
+    will have proper values.
+
++ Model (application/json)
+
+        {
+            "gift": {
+                "hash": "0800fc577294c34e0b28ad2839435945",
+                "sender": "sender@gmail.com",
+                "addressee": "addressee@gmail.com",
+                "from": "John Doe",
+                "to": "Kate",
+                "message": "Enjoy Sesame Street world!",
+                "subscription": {
+                    "id": 11,
+                    "externalID": "3subcr",
+                    "title": "Monthly",
+                    "plan": 71,
+                    "status": "inactive",
+                    "created": 1409919391,
+                    "purchased": 1409919691,
+                    "periodStart": 0,
+                    "periodEnd": 0,
+                    "renew": false
+                }
+            }
+        }
+
+### Create a gift subscription [POST]
+
+Parameters description:
+
++ `plan` - plan ID for gift. Only plans with intent `gift` should be used.
++ `token` - payment (card) token.
++ `sender` - email of sender (buyer).
++ `addressee` - email of receiver.
++ `from` - name of sender.
++ `to` - name of receiver.
++ `message` - additional message for gift.
+
++ Request (application/json)
+
+        {
+            "plan": 71,
+            "token": "12345",
+            "sender": "sender@gmail.com",
+            "addressee": "addressee@gmail.com",
+            "from": "John Doe",
+            "to": "Kate",
+            "message": "Enjoy Sesame Street world!"
+        }
+
++ Response 200
+
+    [Gift][]
+
++ Response 403 (application/json)
+
+        {
+            "errors": [
+                "Payment token is not valid",
+                "Sender email is not valid",
+                "Addressee email is not valid"
+            ]
+        }
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Plan not found"
+            ]
+        }
+
+## Gift Collection [/gifts/]
+
++ Model (application/json)
+
+        {
+            "gifts": [
+                {
+                    "hash": "0800fc577294c34e0b28ad2839435945",
+                    "sender": "sender@gmail.com",
+                    "addressee": "addressee@gmail.com",
+                    "from": "John Doe",
+                    "to": "Kate",
+                    "message": "Enjoy Sesame Street world!",
+                    "subscription": {
+                        "id": 11,
+                        "externalID": "3subcr",
+                        "title": "Monthly",
+                        "plan": 71,
+                        "status": "inactive",
+                        "created": 1409919391,
+                        "purchased": 1409919691,
+                        "periodStart": 0,
+                        "periodEnd": 0,
+                        "renew": false
+                    }
+                },
+                {
+                    "hash": "0845fc577294c34e0b28ad2839435945",
+                    "sender": "sender2@gmail.com",
+                    "addressee": "addressee2@gmail.com",
+                    "from": "John Doe",
+                    "to": "Kate",
+                    "message": "Enjoy Sesame Street world!",
+                    "subscription": {
+                        "id": 12,
+                        "externalID": "4subcr",
+                        "title": "3-Month",
+                        "plan": 72,
+                        "status": "inactive",
+                        "created": 1409919391,
+                        "purchased": 1409919691,
+                        "periodStart": 0,
+                        "periodEnd": 0,
+                        "renew": false
+                    }
+                }
+            ]
+        }
+
+### List all gifts of current user or get single gift by its hash. [GET]
+
++ Response 200
+
+    [Gift Collection][]
+    
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
+## Retrieve/apply Gift [/gifts/{hash}]
+
+### Get single gift by its hash. [GET]
+
++ Parameters
+    +  hash (required, string, `0800fc577294c34e0b28ad2839435945`) ... Provide Gift hash to retrieve specific Gift.
+
++ Response 200
+
+    [Gift][]
+    
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Gift not found"
+            ]
+        }
+
+### Apply Gift by its hash [POST]
+
++ Parameters
+    +  hash (required, string, `0800fc577294c34e0b28ad2839435945`) ... Gift hash to apply.
+
++ Response 200
+
+    [Gift][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
++ Response 403 (application/json)
+
+        {
+            "errors": [
+                "User already has an active subscription"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Gift not found"
+            ]
+        }
+
+# Group Discounts
+
+## Discount [/discount/{hash}]
+
+Properties description:
+
++ `plan` - array of plans available for provided discount.
+
++ Parameters
+    +  hash (required, string, `0800fc577294c34e0b28ad2839435945`) ... Discount hash/code.
+
++ Model (application/json)
+
+        {
+            "discount": {
+                "valid": true,
+                "amountOff": 0,
+                "currency": "usd",
+                "percentOff": 50,
+                "redeemBy": 1409823899,
+                "plan": [
+                    3, 4, 5, 24
+                ],
+                "trialPeriod": [3, "month"]
+            }
+        }
+
+### Get discount info [GET]
+
++ Response 200
+
+    [Discount][]
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Discount not found"
+            ]
+        }
+
+# Group Pages
+
+## Pages Collection [/pages]
+
+Page properties description:
+
++ `machineName` - unique machine name for the basic page. Generated automatically from title by default,
+                    but can be set manually too.
++ `title` - title of page.
++ `summary` - body summary.
++ `body` - page body.
+
++ Model (application/json)
+
+        {
+            "pages": [
+                {
+                    "machineName": "faq",
+                    "title": "FAQ/Help",
+                    "summary": "What is Sesame Go? Sesame Go is a subscription video-on-demand service.",
+                    "body": "What is Sesame Go? Sesame Go is a subscription video-on-demand service..."
+                },
+                {
+                    "machineName": "terms_and_conditions",
+                    "title": "Terms and Conditions",
+                    "summary": "What is Sesame Go? Sesame Go is a subscription video-on-demand service.",
+                    "body": "Curabitur tempus est leo, ut gravida lacus semper id. Suspendisse vel tortor quis orci semper vulputate id sed nunc. Praesent velblandit risus, eu eleifend ipsum."
+                }
+            ]
+        }
+
+### List all pages [GET]
+
++ Response 200
+
+    [Pages Collection][]
+
+## Page [/pages/{machineName}]
+
++ Model (application/json)
+
+        {
+            "page": {
+                "machineName": "faq",
+                "title": "FAQ/Help",
+                "summary": "What is Sesame Go? Sesame Go is a subscription video-on-demand service.",
+                "body": "What is Sesame Go? Sesame Go is a subscription video-on-demand service."
+            }
+        }
+
+### Get a single page [GET]
+
++ Parameters
+    + machineName (required, string, `faq-help`) ... Unique machine name for the basic page. Generated automatically from title by default, but can be set manually too.
+
++ Response 200
+
+    [Page][]
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Page not found"
+            ]
+        }
+        
+# Group FAQ
+
+## FAQ Collection [/faq]
+
+FAQ collection properties description:
+
++ `question` - question body.
++ `answer` - answer body.
++ `pages` - FAQ items array.
+
++ Model (application/json)
+
+        {
+            "faq": [
+                {
+                    "id": 15,
+                    "title": "Free Trial and Billing",
+                    "pages": [
+                        {
+                            "question": "How Does the Free Trial Work?",
+                            "answer": "Sesame Go is a subscription video-on-demand service...",
+                        },
+                        {
+                            "question": "How Do I Subscribe?",
+                            "answer": "Curabitur tempus est leo, ut gravida lacus semper id. Suspendisse vel tortor quis orci semper vulputate id sed nunc. Praesent velblandit risus, eu eleifend ipsum."
+                        }
+                    ]
+                },
+                {
+                    "id": 17,
+                    "title": "Watching SesameGo",
+                    "pages": [
+                        {
+                            "question": "How Do I Access My Account?",
+                            "answer": "Sesame Go is a subscription video-on-demand service...",
+                        },
+                        {
+                            "question": "How to Change Password",
+                            "answer": "Curabitur tempus est leo, ut gravida lacus semper id. Suspendisse vel tortor quis orci semper vulputate id sed nunc. Praesent velblandit risus, eu eleifend ipsum."
+                        }
+                    ]
+                
+                }
+            ]
+        }
+
+### List all FAQ items [GET]
+
++ Response 200
+
+    [FAQ Collection][]
+
+# Group Videos
+
+## Video [/videos/{id}]
+
+Information about Video properties you can find in section __Playlist Videos Collection__.
+
++ Model (application/json)
+
+        {
+            "video": {
+                "id": 7,
+                "uri": "/home/sesame-full-street-episodes/elmo-first-day/",
+                "title": "Elmo's First Day of School",
+                "kalturaID": "1_e15z9gvp",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                "duration": 800,
+                "free": true,
+                "terms": [
+                    {
+                        "id": 15,
+                        "title": "Reading",
+                        "description": "Some Reading description.",
+                        "taxonomy": "theme"
+                    },
+                    {
+                        "id": 20,
+                        "title": "Conflict Resolution",
+                        "description": "Some Conflict Resolution description.",
+                        "taxonomy": "theme"
+                    },
+                    {
+                        "id": 16,
+                        "title": "Elmo's World",
+                        "description": "",
+                        "taxonomy": "show"
+                    },
+                    {
+                        "id": 17,
+                        "title": "Elmo",
+                        "description": "",
+                        "taxonomy": "character"
+                    }
+                ]
+            }
+        }
+
+### Get a single video episode [GET]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+
++ Response 200
+
+    [Video][]
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+
+## Related Videos [/videos/{id}/related?offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
+### List all related videos [GET]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many videos should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of videos to return.
+
++ Response 200 (application/json)
+
+        {
+            "videosTotal": 2,
+            "videos": [
+                {
+                    "id": 7,
+                    "uri": "/home/sesame-full-street-episodes/elmo-first-day/",
+                    "title": "Elmo's First Day of School",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": {
+                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png"
+                    },
+                    "duration": 1800,
+                    "free": true,
+                    "terms": [
+                        {
+                            "id": 15,
+                            "title": "Reading",
+                            "description": "Some Reading description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 17,
+                            "title": "Elmo",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                },
+                {
+                    "id": 11,
+                    "uri": "/home/rositas-fiesta/",
+                    "title": "Rosita's fiesta",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": {
+                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png",
+                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_askhsvum/format/png"
+                    },
+                    "duration": 1800,
+                    "free": false,
+                    "terms": [
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 18,
+                            "title": "Rosita",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                }
+            ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+        
+## Favorite Videos [/videos/favorite?offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
+### List favorited videos of current user [GET]
+
++ Parameters
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many videos should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of videos to return.
+
++ Response 200 (application/json)
+
+        {
+            "videosTotal": 2,
+            "videos": [
+                {
+                    "id": 7,
+                    "uri": "/home/sesame-full-street-episodes/elmo-first-day/",
+                    "title": "Elmo's First Day of School",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                    "duration": 1800,
+                    "free": true,
+                    "terms": [
+                        {
+                            "id": 15,
+                            "title": "Reading",
+                            "description": "Some Reading description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 17,
+                            "title": "Elmo",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                },
+                {
+                    "id": 11,
+                    "uri": "/home/rositas-fiesta/",
+                    "title": "Rosita's fiesta",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                    "duration": 1800,
+                    "free": false,
+                    "terms": [
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 18,
+                            "title": "Rosita",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                }
+            ]
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
+## Watched Videos [/videos/watched?offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
+### List watched videos of current user [GET]
+
++ Parameters
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many videos should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of videos to return.
+
++ Response 200 (application/json)
+
+        {
+            "videosTotal": 2,
+            "videos": [
+                {
+                    "id": 7,
+                    "uri": "/home/sesame-full-street-episodes/elmo-first-day/",
+                    "title": "Elmo's First Day of School",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                    "duration": 1800,
+                    "free": true,
+                    "terms": [
+                        {
+                            "id": 15,
+                            "title": "Reading",
+                            "description": "Some Reading description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 17,
+                            "title": "Elmo",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                },
+                {
+                    "id": 11,
+                    "uri": "/home/rositas-fiesta",
+                    "title": "Rosita's fiesta",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp",
+                    "duration": 1800,
+                    "free": false,
+                    "terms": [
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 18,
+                            "title": "Rosita",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                }
+            ]
+        }       
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        } 
+
+## Watched Video [/videos/{id}/watched]
+
+### Check if a specific episode was watched by a current user [GET]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+
++ Response 200 (application/json)
+
+        {
+            "watched": true
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+
+
+## Favorite Video [/videos/{id}/favorite]
+
+### Check if a specific episode was favorited by a current user [GET]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+
++ Response 200 (application/json)
+
+        {
+            "favorite": false
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+
+## Favorite Video [/videos/{id}/favorite/{action}]
+
+### Add/delete the video episode to/from the favorite list [POST]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+    + action (required, string, `add`) ... Add/delete the video episode to/from the favorites.
+        + Values
+            + `add`
+            + `delete`
+
++ Response 200 (application/json)
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+        
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Invalid action for video"
+            ]
+        }
+
+## Start position [/videos/{id}/heartbeat]
+
+Start position is required for a cross-device resume feature.
+
+### Update a start position in a video for the current user [PUT]
+
++ Parameters
+
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+
++ Request (application/json)
+
+        {
+            "duration": 73
+        }
+
++ Response 200 (application/json)
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+
+## Play video [/videos/{id}/play]
+
+### Get player parameters and streaming URL [GET]
+
++ Parameters
+    + id (required, number, `7`) ... Unique identifier for the video episode.
+
++ Response 200 (application/json)
+
+        {
+            "start": 0,
+            "url": "http://www.kaltura.com/p/1786071/sp/178607100/playManifest/entryId/1_2vb0jthb/flavorParamId/301951/format/applehttp/protocol/http/video.m3u8?ks=djJ8MTc4NjA3MXzg8DePaSa9ViRznuUeD8zDnFI95lZ1vEVIeCG4Urd8fp-y_7AKz0IXosfYftyfeIHUUzxBt_F1qbfNHTRO6C_NaRwomQT0BVyk2Lj8SS3XAA==",
+            "alternativeURL": "http://www.kaltura.com/p/1786071/sp/178607100/playManifest/entryId/1_2vb0jthb/flavorParamId/487071/format/url/protocol/http/video.mp4?ks=djJ8MTc4NjA3MXzg8DePaSa9ViRznuUeD8zDnFI95lZ1vEVIeCG4Urd8fp-y_7AKz0IXosfYftyfeIHUUzxBt_F1qbfNHTRO6C_NaRwomQT0BVyk2Lj8SS3XAA==",
+            "ks": "djJ8MTc4NjA3MXxIU89AUyUTZwuSOATaoj0mLArBo12Rg5Ks0Qw5bSuMJM9VBXR-Yn57JBdn8sF5pFhGGCkI264WwWE9inIcxcsJ0.00030517578125",
+            "captions": "http://cdnbakmi.kaltura.com/api_v3/index.php/service/caption_captionAsset/action/serve/captionAssetId/1_k14eloqa",
+            "image": "http://cdnbakmi.kaltura.com/p/1786071/thumbnail/entry_id/1_e15z9gvp"
+            "duration": 300
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errors": [
+                "You are not authorized to access"
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Video not found"
+            ]
+        }
+
+# Group Taxonomies
+
+## Taxonomies Collection [/taxonomies]
+
++ Model (application/json)
+
+        {
+            "taxonomies": [
+                {
+                    "name": "Theme",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "machineName": "theme"
+                },
+                {
+                    "name": "Show",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "machineName": "show"
+                },
+                {
+                    "name": "Character",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "machineName": "character"
+                }
+            ]
+        }
+
+### List all Taxonomies [GET]
+
++ Response 200
+
+    [Taxonomies Collection][]
+
+## Terms Collection [/terms/{taxonomyName}?offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
++ Model (application/json)
+
+        {
+            "termsTotal": 2,
+            "terms": [
+                {
+                    "id": 15,
+                    "title": "Reading",
+                    "description": "Some Reading description.",
+                    "taxonomy": "learn_about",
+                    "videosNumber": 12,
+                    "image": {
+                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png"
+                    }
+                },
+                {
+                    "id": 20,
+                    "title": "Conflict Resolution",
+                    "description": "Some Conflict Resolution description.",
+                    "taxonomy": "theme",
+                    "videosNumber": 5,
+                    "image": {
+                        "portrait": "",
+                        "landscape": ""
+                    }
+                }
+            ]
+        }
+
+### List all Terms in a specific Taxonomy [GET]
+
++ Parameters
+    + taxonomyName (required, string, `theme`) ... Machine name of the taxonomy.
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many terms should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of terms to return.
+
++ Response 200
+
+    [Terms Collection][]
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Taxonomy not found"
+            ]
+        }
+
+## Term [/terms/{id}]
+
++ Model (application/json)
+
+        {
+            "term": {
+                "id": 15,
+                "title": "Reading",
+                "description": "Some Reading description.",
+                "taxonomy": "theme",
+                "videosNumber": 5,
+                "image": {
+                    "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                    "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png"
+                }
+            }
+        }
+
+### Get a single term [GET]
+
++ Parameters
+    + id (required, number, `15`) ... Unique identifier for the term.
+
++ Response 200
+
+    [Term][]
+
++ Response 404 (application/json)
+
+        {
+            "errors": [
+                "Term not found"
+            ]
+        }
+
+# Group Search
+
+## General search [/search?s={searchText}&{taxonomy}%5B%5D={term}&offsetNumber={offsetNumber}&limitNumber={limitNumber}]
+
++ Parameters
+
+    + searchText (optional, string) ... A search string.
+    + taxonomy (optional, string) ... Machine name of the taxonomy. 
+        Key-value pair "taxonomy=term" can be included as argument multiple 
+        times, i.e. &theme[]=reading&theme[]=learning&character[]=elmo&...
+    + term (optional, string) ... Name of the Theme term.
+    + offsetNumber (optional, number, `0`) ... Offset, defines how many items should be skipped from start.
+    + limitNumber (optional, number, `10`) ... Number of items to return.
+
+### Retrieve search results [GET]
+
++ Response 200 (application/json)
+
+        {
+            "itemsTotal": 1,
+            "items": [
+                {
+                    "type": "video",
+                    "id": 11,
+                    "uri": "/home/rositas-fiesta",
+                    "title": "Rosita's fiesta",
+                    "titleBarColor": "#ff4b38",
+                    "titleBarLipColor": "#bb1200",
+                    "kalturaID": "1_e15z9gvp",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipi scing elit. In fermentum tellus non dui laoreet condimentum.",
+                    "image": {
+                        "portrait": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png",
+                        "landscape": "http://cdnbakmi.kaltura.com/p/1507822/sp/150782200/thumbnail/entry_id/0_llr5wub6/format/png"
+                    },
+                    "duration": 1800,
+                    "free": false,
+                    "terms": [
+                        {
+                            "id": 20,
+                            "title": "Conflict Resolution",
+                            "description": "Some Conflict Resolution description.",
+                            "taxonomy": "theme"
+                        },
+                        {
+                            "id": 16,
+                            "title": "Elmo's World",
+                            "description": "",
+                            "taxonomy": "show"
+                        },
+                        {
+                            "id": 18,
+                            "title": "Rosita",
+                            "description": "",
+                            "taxonomy": "character"
+                        }
+                    ]
+                }
+            ]
+        }
+
+## Autocomplete [/search/autocomplete?{searchText}]
+
+### List Autocomplete suggestions [GET]
+
++ Parameters
+
+    + searchText (required, string, `e`) ... Beginning of a search string.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "suffix": "lmo"
+            },
+            {
+                "suffix": "lmo's show"
+            }
+        ]
+        
+# Group Menu
+
+## Menu [/menu]
+
+### Retrieve menu links for mobile or web app [GET]
+
+Link parameters description:
+
++ `title` - link title.
++ `type` - link type. Possible values:
+        + `screen`
+        + `video`
+        + `game`
+        + `page`
+        + `custom`
++ `destination` - link destination. Depending on link type this parameter 
+        should contain URI for `screen`, `video`, `game` or machine name 
+        of `page`.
+
++ Response 200 (application/json)
+
+        {
+            "links": [
+                {
+                    "title": "Videos",
+                    "type": "screen",
+                    "destination": "/videos",
+                    "links": [
+                        {
+                            "title": "Full Episodes",
+                            "type": "screen",
+                            "destination": "/videos/full-episodes",
+                            "links": []
+                        },
+                        {
+                            "title": "Musics",
+                            "type": "screen",
+                            "destination": "/musics",
+                            "links": []
+                        }
+                    ]
+                },
+                {
+                    "title": "Games",
+                    "type": "screen",
+                    "destination": "/games",
+                    "links": []
+                },
+                {
+                    "title": "About us",
+                    "type": "page",
+                    "destination": "about-us",
+                    "links": []
+                }
+            ]
+        }
+
+# Group Misc
+
+## Send feedback [/feedback]
+
+### Submit a feedback form [POST]
+
++ Request (application/json)
+
+        {
+            "subject": "Support",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eget eleifend est, at adipiscing augue. Duis et turpis odio. Sed egestas bibendum leo, ut mattis neque aliquet sit amet.",
+            "from": "sender@email.com"
+        }
+
++ Response 200 (application/json)
+
++ Response 406 (application/json)
+
+        {
+            "errors": [
+                "Invalid email",
+                "Invalid subject"
+            ]
+        }
